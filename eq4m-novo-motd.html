@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esquerda4Morto2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            height: 100vh;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            font-family: 'Special Elite', cursive;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("logoMotd.png");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            filter: brightness(0.4) contrast(1.2);
+            z-index: -1;
+        }
+        
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("/api/placeholder/1920/1080");
+            background-size: cover;
+            opacity: 0.1;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-family: 'Creepster', cursive;
+            font-size: 28px;
+            color: #ff3333;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Header */
+        .header {
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-family: 'Creepster', cursive;
+            font-size: 48px;
+            color: #ff3333;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            animation: pulse 4s infinite;
+        }
+        
+        .header p {
+            font-size: 18px;
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Content */
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            flex: 1 1 300px;
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+        }
+        
+        .card-header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-header h2 {
+            font-family: 'Creepster', cursive;
+            font-size: 24px;
+            color: #ff9900;
+            letter-spacing: 1px;
+            text-align: center;
+            margin: 0;
+        }
+        
+        .card-body {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .card-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .card-body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        
+        .card-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Command List */
+        .command-list {
+            list-style-type: none;
+        }
+        
+        .command-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+        }
+        
+        .command-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .command-icon {
+            margin-right: 15px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #ffcc00;
+        }
+        
+        .command-name {
+            color: #0f0;
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 100px;
+        }
+        
+        .command-description {
+            color: #bbb;
+            flex-grow: 1;
+        }
+        
+        /* Infected List */
+        .infected-list {
+            list-style-type: none;
+        }
+        
+        .infected-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
+        }
+        
+        .infected-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .infected-icon {
+            margin-right: 15px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(255, 0, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #ff3333;
+        }
+        
+        .infected-name {
+            color: #ff3333;
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 100px;
+        }
+        
+        .infected-description {
+            color: #bbb;
+            flex-grow: 1;
+        }
+        
+        .image-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .image-container img:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            padding: 20px 0;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 0, 0, 0.9), 0 0 30px rgba(255, 0, 0, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+            
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-container">
+            <div class="logo">L4D2</div>
+            <div class="nav-links">
+                <a href="#comandos" class="nav-link">Comandos</a>
+                <a href="#infectados" class="nav-link">Infectados</a>
+                <a href="#dicas" class="nav-link">Dicas</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Esquerda 4 Morto 2</h1>
+            <p>Sobreviva ao apocalipse zumbi com seus amigos. Aprenda todos os comandos e dicas para dominar o jogo.</p>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="card" id="comandos">
+                <div class="card-header">
+                    <h2>Comandos</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="command-list">
+                        <li class="command-item">
+                            <div class="command-icon">C</div>
+                            <div class="command-name">!csm</div>
+                            <div class="command-description">Escolher modelo do personagem</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">J</div>
+                            <div class="command-name">!join</div>
+                            <div class="command-description">Entre no jogo caso fique de espectador</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">R</div>
+                            <div class="command-name">!rank e !top10</div>
+                            <div class="command-description">Ver sua classificação e os 10 melhores jogadores</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">E</div>
+                            <div class="command-name">!emote</div>
+                            <div class="command-description">Para dancinhas e emotes</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">S</div>
+                            <div class="command-name">Espaço</div>
+                            <div class="command-description">Bunnyhop liberado</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">P</div>
+                            <div class="command-name">R + SHOVE</div>
+                            <div class="command-description">Enquanto segura a pipe para grudar ela nos infectados</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">B</div>
+                            <div class="command-name">R + SHOVE</div>
+                            <div class="command-description">Mesma coisa que a pipe mas aplica bile no infectado</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">W</div>
+                            <div class="command-name">W</div>
+                            <div class="command-description">Se arrastar enquanto está incapacitado</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">A</div>
+                            <div class="command-name">Ataque secundário</div>
+                            <div class="command-description">Passar itens entre amigos/trocar com bots</div>
+                        </li>
+                    </ul>
+                    <div class="image-container">
+                        <img src="smokerhalk.png">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" id="infectados">
+                <div class="card-header">
+                    <h2>Infectados Especiais</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="infected-list">
+                        <li class="infected-item">
+                            <div class="infected-icon">🔥</div>
+                            <div class="infected-name">Em Chamas</div>
+                            <div class="infected-description">Infectados Especiais causam o dobro do dano enquanto estão em chamas</div>
+                        </li>
+                        <li class="infected-item">
+                            <div class="infected-icon">H</div>
+                            <div class="infected-name">Hunter</div>
+                            <div class="infected-description">Cheirou pó. Muito mais rápido e perigoso</div>
+                        </li>
+                        <li class="infected-item">
+                            <div class="infected-icon">B</div>
+                            <div class="infected-name">Boomer</div>
+                            <div class="infected-description">Reage instantâneamente, divirta-se</div>
+                        </li>
+                        <li class="infected-item">
+                            <div class="infected-icon">S</div>
+                            <div class="infected-name">Smoker</div>
+                            <div class="infected-description">Língua de 1km</div>
+                        </li>
+                        <li class="infected-item">
+                            <div class="infected-icon">T</div>
+                            <div class="infected-name">Tank</div>
+                            <div class="infected-description">Não para de socar e tem um truque na manga</div>
+                        </li>
+                    </ul>
+                    
+                    <div class="image-container">
+                        <img src="naopodeseria.png" alt="naopodeseria">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" id="dicas">
+                <div class="card-header">
+                    <h2>Dicas de Sobrevivência</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="command-list">
+                        <li class="command-item">
+                            <div class="command-icon">1</div>
+                            <div class="command-name">Equipe</div>
+                            <div class="command-description">Sempre fique perto do seu time. Sobreviventes sozinhos são alvos fáceis</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">2</div>
+                            <div class="command-name">Comunicação</div>
+                            <div class="command-description">Use o chat de voz para coordenar ataques e alertar sobre perigos</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">3</div>
+                            <div class="command-name">Recursos</div>
+                            <div class="command-description">Compartilhe itens com seu time. Um sobrevivente morto não ajuda ninguém</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">4</div>
+                            <div class="command-name">Posição</div>
+                            <div class="command-description">Fique de costas para paredes para evitar ataques surpresa</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">5</div>
+                            <div class="command-name">Paciência</div>
+                            <div class="command-description">Não saia correndo. Avance com cautela e de forma coordenada</div>
+                        </li>
+                    </ul>
+
+                    <div class="image-container">
+                        <img src="littledick.jpg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-wrapper" style="margin-top: 20px;">
+            <div class="card" id="armas">
+                <div class="card-header">
+                    <h2>Arsenal</h2>
+                    <a class="nav-link" href="eq4m-armas.html">Mais....</a>
+                </div>
+                <div class="card-body">
+                    <ul class="command-list">
+                        <li class="command-item">
+                            <div class="command-icon">A</div>
+                            <div class="command-name">AK-47</div>
+                            <div class="command-description">Alta taxa de dano mas difícil de controlar</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">M</div>
+                            <div class="command-name">M16</div>
+                            <div class="command-description">Precisa, rápida mas dano baixo</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">S</div>
+                            <div class="command-name">Chrome Shotgun</div>
+                            <div class="command-description">Potente a curta distância, ideal para espaços fechados</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">H</div>
+                            <div class="command-name">Hunting Rifle</div>
+                            <div class="command-description">Precisa e potente a longa distância</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">M</div>
+                            <div class="command-name">Military Rifle</div>
+                            <div class="command-description">Mais rápida e menos dano que a Hunting Rifle</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card" id="eventos">
+                <div class="card-header">
+                    <h2>Eventos Especiais</h2>
+                </div>
+                <div class="card-body">
+                    <ul class="command-list">
+                        <li class="command-item">
+                            <div class="command-icon">H</div>
+                            <div class="command-name">Horde</div>
+                            <div class="command-description">Quando o alarme toca, ondas de infectados vêm em sua direção</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">T</div>
+                            <div class="command-name">Tank</div>
+                            <div class="command-description">Não bote fogo nele, pode deixar ele puto...</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">W</div>
+                            <div class="command-name">Witch</div>
+                            <div class="command-description">Não perturbe! Ela pode eliminar um sobrevivente com um único golpe</div>
+                        </li>
+                        <li class="command-item">
+                            <div class="command-icon">F</div>
+                            <div class="command-name">Finale</div>
+                            <div class="command-description">O momento final, sobreviva a múltiplas ondas até o resgate</div>
+                        </li>
+                    </ul>
+                    <div class="image-container">
+                        <img src="graffiti.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Esquerda 4 Morto 2 - Sobreviva se puder! Meu Discord: #marvin9541 </p>
+        </div>
+    </div>
+    
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Add hover sound effects (if you add audio files)
+        /* Uncomment this if you add audio files
+        const hoverSound = new Audio('hover.mp3');
+        const clickSound = new Audio('click.mp3');
+        
+        document.querySelectorAll('.nav-link, .command-item, .infected-item').forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                hoverSound.currentTime = 0;
+                hoverSound.play();
+            });
+            
+            element.addEventListener('click', () => {
+                clickSound.currentTime = 0;
+                clickSound.play();
+            });
+        });
+        */
+    </script>

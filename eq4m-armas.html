@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Left 4 Dead 2 Weapon Stats</title>
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&display=swap');
+
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: normal;
+            padding: 20px;
+            background-color: #000000;
+        }
+        h1 {
+            color: #ddd;
+        }
+        
+        /* Chrome 18 compatible layout - avoiding flexbox */
+        .weapon-category {
+            display: none;
+            margin-bottom: 20px;
+        }
+        
+        .weapon-category.active {
+            display: block;
+        }
+        
+        .weapon-grid {
+            width: 100%;
+            overflow: hidden; /* Clearfix for floats */
+        }
+        
+        .weapon-card {
+            float: left;
+            width: 300px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 5px;
+            -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .weapon-card-header {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            overflow: hidden; /* Clearfix */
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        
+        .weapon-icon {
+            float: left;
+            width: 30px;
+            height: 30px;
+            background-color: #666;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 15px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .weapon-card-name {
+            float: left;
+            line-height: 30px;
+            font-weight: bold;
+        }
+        
+        .weapon-card-body {
+            padding: 10px;
+        }
+        
+        .weapon-card-stat {
+            margin-bottom: 10px;
+        }
+        
+        .weapon-card-stat-name {
+            overflow: hidden; /* Clearfix */
+            margin-bottom: 4px;
+        }
+        
+        .weapon-card-stat-label {
+            float: left;
+            font-weight: bold;
+        }
+        
+        .stat-value {
+            float: right;
+        }
+        
+        .stat-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+        }
+        
+        .stat-bar {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .stat-bar.damage {
+            background-color: #ff4d4d;
+        }
+        
+        .stat-bar.fire-rate {
+            background-color: #4da6ff;
+        }
+        
+        .stat-bar.accuracy {
+            background-color: #66cc66;
+        }
+        
+        .stat-bar.reload {
+            background-color: #ffa64d;
+        }
+        
+        .weapon-card-description {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Navigation */
+        .weapon-nav {
+            margin-bottom: 20px;
+            overflow: hidden; /* Clearfix */
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .weapon-nav-item {
+            float: left;
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #515151;
+            margin-right: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        
+        .weapon-nav-item.active {
+            background-color: #cecece;
+            color: white;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-family: 'Creepster', cursive;
+            font-size: 28px;
+            color: #ff3333;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+        }
+
+        .nav-links {
+            display: flex;
+            font-family: cre;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: #aaa;
+            text-decoration: none;
+            font-family: 'Special Elite', cursive;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-container">
+            <div class="logo">L4D2</div>
+            <div class="nav-links">
+                <a href="eq4m-novo-motd.html" class="nav-link">Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="weapon-nav">
+        <div class="weapon-nav-item active" data-target="t1">T1</div>
+        <div class="weapon-nav-item" data-target="t2">T2</div>
+        <div class="weapon-nav-item" data-target="t3">T3</div>
+        <div class="weapon-nav-item" data-target="secondary">Secundárias</div>
+    </div>
+    
+    <div id="t1" class="weapon-category active">
+        <div class="weapon-grid">
+
+            <!-- Uzi -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">UZ</div>
+                    <div class="weapon-card-name">Uzi</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">20</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 20%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.0625s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">50%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.26s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Nunca usei e usarei
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAC-10 -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">MC</div>
+                    <div class="weapon-card-name">MAC-10</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">25</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 33%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.0625s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">60%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.26s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Você gosta de ter os ouvidos explodidos
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uzi -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">MP</div>
+                    <div class="weapon-card-name">MP5</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">27</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.06s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">60%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">3.06s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 57%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        É rara, mas toda SMG Tier 1 queria ser igual ela
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chrome Shotgun -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">SG</div>
+                    <div class="weapon-card-name">Chrome Shotgun</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">39x8</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">1s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 10%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">0.5s por cartucho</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Melhor que muita T2
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pump Shotgun -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">SG</div>
+                    <div class="weapon-card-name">Pump Shotgun</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">32x10</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">1s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 10%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">0.5s por cartucho</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Procure pela Chrome
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tier 2 -->
+    <div id="t2" class="weapon-category">
+        <div class="weapon-grid">
+            <!-- M16 Assault Rifle -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">AR</div>
+                    <div class="weapon-card-name">M16</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">42</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.0875s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">85%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.23s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Parece uma arma T1 em Realism Expert
+                    </div>
+                </div>
+            </div>
+
+            <!-- SG-552 -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">AR</div>
+                    <div class="weapon-card-name">SG552</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">45</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 57%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.08s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">85%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">3.4s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 30%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        M16 se fosse boa
+                    </div>
+                </div>
+            </div>
+
+            <!-- AK-47 -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">AK</div>
+                    <div class="weapon-card-name">AK-47</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">65</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.13s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 33%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">50%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.5s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Melhor rifle do jogo
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scar-L -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">SC</div>
+                    <div class="weapon-card-name">SCAR-L</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">49</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.07s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width:95%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">90%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">3.3s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 25%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Pegue outra
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hunting rifle -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">HR</div>
+                    <div class="weapon-card-name">Hunting Rifle</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">100</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.25s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 25%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">96%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 96%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">3.13s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 52%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Lhe faz pensar que você é bom no jogo
+                    </div>
+                </div>
+            </div>
+
+            <!-- Military rifle -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">MR</div>
+                    <div class="weapon-card-name">Military Rifle</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">80</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.2s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 35%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">75%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">3.3s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 47%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Sempre é bom tomar um banho, seu tryhard
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auto-shotgun -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">AS</div>
+                    <div class="weapon-card-name">Auto-shotgun</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">23x11</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.15s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 70%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">0.34s por cartucho</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Use a SPAS-12
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spas -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">CS</div>
+                    <div class="weapon-card-name">Combat-Shotgun</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">28x9</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.15s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 70%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">0.34s por cartucho</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Quando a vontade de fazer TK bate
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="t3" class="weapon-category">
+        <div class="weapon-grid">
+
+            <!-- M60 -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">M60</div>
+                    <div class="weapon-card-name">M60</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">65</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 14%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.1s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">60%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.5s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        AK-47 se fosse boa
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scout -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">SC</div>
+                    <div class="weapon-card-name">Scout</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">225</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.6s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 18%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">90%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.9s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Não atire nos colegas
+                    </div>
+                </div>
+            </div>
+
+            <!-- AWP -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">SC</div>
+                    <div class="weapon-card-name">AWP</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">450</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.9s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 9%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">80%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">3.66s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 20%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        NÃO ATIRE NOS COLEGAS
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Secondary Weapons -->
+    <div id="secondary" class="weapon-category">
+        <div class="weapon-grid">
+            <!-- Pistol -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">P</div>
+                    <div class="weapon-card-name">Pistol</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">45</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.175s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">75%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">1.5s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento (Duplas)</span>
+                            <span class="stat-value">2.33s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Quebra o galho, mas cuidado com a tendinite
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pistol -->
+            <div class="weapon-card">
+                <div class="weapon-card-header">
+                    <div class="weapon-icon">DE</div>
+                    <div class="weapon-card-name">Desert Eagle</div>
+                </div>
+                <div class="weapon-card-body">
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Dano</span>
+                            <span class="stat-value">160</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar damage" style="width: 150%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Cadência</span>
+                            <span class="stat-value">0.2675s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar fire-rate" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Precisão</span>
+                            <span class="stat-value">90%</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar accuracy" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-stat">
+                        <div class="weapon-card-stat-name">
+                            <span class="weapon-card-stat-label">Tempo de carregamento</span>
+                            <span class="stat-value">2.0s</span>
+                        </div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar reload" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="weapon-card-description">
+                        Tudo o que você precisa para completar uma campanha
+                    </div>
+                </div>
+            </div>
+
+            <!-- More secondary weapons would go here -->
+        </div>
+    </div>
+    </div>
+
+    <script type="text/javascript">
+        // Simple tab switching script compatible with older browsers
+        window.onload = function() {
+            var navItems = document.getElementsByClassName('weapon-nav-item');
+            for (var i = 0; i < navItems.length; i++) {
+                navItems[i].onclick = function() {
+                    // Remove active class from all tabs
+                    for (var j = 0; j < navItems.length; j++) {
+                        navItems[j].className = navItems[j].className.replace(' active', '');
+                    }
+
+                    // Add active class to clicked tab
+                    this.className += ' active';
+
+                    // Hide all weapon categories
+                    var categories = document.getElementsByClassName('weapon-category');
+                    for (var k = 0; k < categories.length; k++) {
+                        categories[k].className = categories[k].className.replace(' active', '');
+                    }
+
+                    // Show the selected category
+                    var targetId = this.getAttribute('data-target');
+                    document.getElementById(targetId).className += ' active';
+                };
+            }
+        };
+    </script>
+</body>
+</html>
